@@ -18,7 +18,8 @@ public class ConfigApp implements WebMvcConfigurer {
                     "/",                //초기화면
                     "/login",           //로긴처리
                     "/logout",          //로그아웃
-                    "/member/join",    //회원가입
+                    "/member/join",
+                    "/api/members/**",//회원가입
                     "/js/**"
             ); //인터셉터 제외 url패턴
   }
