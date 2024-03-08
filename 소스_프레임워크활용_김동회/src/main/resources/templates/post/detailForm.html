@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>게시글 조회</title>
+		<style>
+			table > tr > td:nth-child(1) {
+				width: 75px;
+			}
+
+			td:nth-child(2) {
+				padding-left: 4px;
+				border: 1px solid black;
+				border-collapse: collapse;
+			}
+
+			table {
+				margin-left: 61px;
+				margin-bottom: 3px;
+			}
+
+			.bottom-border {
+				border-width: 0 0;
+			}
+
+			textarea {
+				resize: none; /* 크기 조절 기능 비활성화 */
+			}
+			textarea:focus {
+				outline: none;
+			}
+
+			#commentErrMsg {
+				color: red;
+			}
+
+			#wrap {
+				display: grid;
+				justify-content: center; /* 가로 방향 가운데 정렬 */
+				align-items: center; /* 세로 방향 가운데 정렬 */
+			}
+
+			#commentAddWrap {
+				margin-top: 5px;
+				display: grid;
+				justify-content: center; /* 가로 방향 가운데 정렬 */
+				align-items: center; /* 세로 방향 가운데 정렬 */
+			}
+
+			#wrap > h3 {
+				margin-left: 305px;
+			}
+
+			ul {
+				list-style: none;
+				padding-left: 0px;
+			}
+
+			.commentList li {
+				background-color: rgb(215, 223, 223);
+				border-bottom: 1px solid black; /* 하단 테두리 */
+				padding-bottom: 0.5em; /* 아래쪽 공간 */
+			}
+
+			li > .reply {
+				margin: 0;
+				padding: 3px;
+				background-color: rgb(215, 223, 223);
+			}
+			li #userEmail {
+				margin: 0;
+			}
+			#pagination {
+				margin-left: 160px;
+			}
+
+			/* 버튼 wrap css */
+			.button_wrap > ul > li > input {
+				border: none; /* 테두리 없애기 */
+				background: none; /* 배경 없애기 */
+				padding: 0; /* 내부 여백 없애기 */
+				font-size: inherit; /* 기본 글꼴 크기 유지 */
+				color: inherit; /* 기본 글꼴 색상 유지 */
+				cursor: pointer; /* 커서를 포인터로 변경 */
+				text-decoration: underline; /* 밑줄 추가 */
+			}
+
+			.button_wrap > ul > li {
+				margin-left: 2px;
+				margin-right: 2px;
+			}
+
+			.button_wrap > ul {
+				display: flex;
+				justify-content: space-around;
+				margin: 0;
+			}
+
+			.button_wrap {
+				display: flex;
+				margin-left: 472px;
+			}
+
+			.comment_button_wrap {
+				display: flex;
+				justify-content: end;
+			}
+
+			.comment_button_wrap > button {
+				border: none; /* 테두리 없애기 */
+				background: none; /* 배경 없애기 */
+				padding: 0; /* 내부 여백 없애기 */
+				font-size: inherit; /* 기본 글꼴 크기 유지 */
+				color: inherit; /* 기본 글꼴 색상 유지 */
+				cursor: pointer; /* 커서를 포인터로 변경 */
+				text-decoration: underline; /* 밑줄 추가 */
+				margin-left: 2px;
+				margin-right: 2px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="wrap">
+			<h3>게시글조회</h3>
+			<div class="button_wrap">
+				<ul>
+					<li th:if="${session.UserData.email == postData.email}">
+						<input id="modifyBtn" type="button" value="수정" />
+					</li>
+					<li th:if="${session.UserData.email == postData.email}">
+						<input id="deleteBtn" type="button" value="삭제" />
+					</li>
+					<li>
+						<input id="listBtn" type="button" value="목록" />
+					</li>
+				</ul>
+			</div>
+			<form action="" method="post">
+				<table>
+					<tr>
+						<td><label for="udate">작성일자</label></td>
+						<td>
+							<input
+								class="bottom-border"
+								type="text"
+								id="udate"
+								name="udate"
+								th:value="${#temporals.format(postData.udate, 'yyyy-MM-dd HH:mm:ss')}"
+								readonly
+							/>
+						</td>
+					</tr>
+					<tr>
+						<td><label for="title"> 제목</label></td>
+						<td>
+							<input
+								class="bottom-border"
+								type="text"
+								id="title"
+								name="title"
+								th:value="${postData.title}"
+								readonly
+							/>
+						</td>
+					</tr>
+					<tr>
+						<td><label for="pname">작성자</label></td>
+						<td>
+							<input
+								class="bottom-border"
+								type="text"
+								id="pname"
+								name="pname"
+								th:value="${postData.email}"
+								readonly
+							/>
+						</td>
+					</tr>
+					<tr>
+						<td><label for="detail"> 내용</label></td>
+						<td>
+							<textarea
+								class="bottom-border"
+								rows="30"
+								cols="60"
+								id="detail"
+								name="detail"
+								th:text="${postData.detail}"
+								readonly
+							></textarea>
+						</td>
+					</tr>
+				</table>
+				<!-- <div class="button_wrap">
+                    <ul>
+                        <li>
+                            <input id="modifyBtn" type="button" value="수정" />
+                        </li>
+                        <li>
+                            <input id="deleteBtn" type="button" value="삭제" />
+                        </li>
+                        <li>
+                            <input id="listBtn" type="button" value="목록" />
+                        </li>
+                    </ul>
+                    <input id="modifyBtn" type="button" value="수정" />
+					<input id="deleteBtn" type="button" value="삭제" />
+					<input id="listBtn" type="button" value="목록" />
+                </div> -->
+			</form>
+
+			<!-- 댓글 등록칸 및 댓글 목록칸 -->
+			<div id="commentAddWrap">
+				<textarea name="" id="comment" cols="100" rows="6"></textarea>
+				<button id="addComment" type="button">등록</button>
+			</div>
+
+			<div id="commentErrMsg"></div>
+
+			<ul class="commentList"></ul>
+
+			<!-- 댓글페이징 -->
+			<div id="pagination"></div>
+		</div>
+
+		<!-- 게시글 삭제 확인 창   -->
+		<dialog id="delModal">
+			<p>삭제하시겠습니까?</p>
+			<form action="" method="dialog">
+				<button id="cancelBtn">취소</button>
+				<button id="delItemBtn">삭제</button>
+			</form>
+		</dialog>
+
+		<!-- 댓글 삭제 확인 창 -->
+		<dialog id="delModalByComment">
+			<p>삭제하시겠습니까?</p>
+			<form action="" method="dialog">
+				<button id="cancelBtnByComment">취소</button>
+				<button id="delItemBtnByComment">삭제</button>
+			</form>
+		</dialog>
+
+		<!-- 댓글 (수정, 삭제) 칸 -->
+		<template id="readMode">
+			<li class="item read">
+				<p id="userEmail"></p>
+				<p class="reply"></p>
+				<div class="comment_button_wrap">
+					<button class="modifyBtn">수정</button
+					><button class="delBtn">삭제</button>
+				</div>
+				<!-- <button class="modifyBtn">수정</button
+                ><button class="delBtn">삭제</button> -->
+			</li>
+		</template>
+
+		<!-- 댓글 (저장, 취소) 칸 -->
+		<template id="modifyMode">
+			<li class="item modi">
+				<!-- <input type="text" /> -->
+				<textarea name="" id="" cols="100" rows="6"></textarea>
+				<p class="emailData"></p>
+				<div class="comment_button_wrap">
+					<button class="saveBtn">저장</button
+					><button class="cancelBtn">취소</button>
+				</div>
+			</li>
+		</template>
+
+		<script th:inline="javascript" type="module" async>
+			  import {Pagination} from '/post_js/paging.js';
+			  const pagination = new Pagination(5,10);
+			  comment_list();
+
+			  // 댓글처리
+			  const $addComment = document.getElementById('addComment')
+
+			  $addComment.addEventListener('click',evt =>{
+
+			    sendData();
+			  });
+
+			  //댓글추가함수
+			  async function sendData() {
+			            const textData ={ detail : document.getElementById('comment').value.trim(),
+			                                        email : [[${session.UserData.email}]]
+			                     }
+
+			                     if(document.getElementById('comment').value.trim().length < 1)
+			                        {           commentErrMsg.textContent = '한글자 이상 입력바랍니다.';
+			                                    return;
+			                        }
+			                    else{
+			                                         commentErrMsg.textContent = '';
+			                          }
+			            try {
+			                const response = await fetch(`http://localhost:9080/comment/[[${postData.postId}]]/addComment`, {
+			                    method: 'POST',
+			                    headers: {
+			                        'Content-Type': 'application/json'
+			                    },
+			                    body:JSON.stringify(textData)
+			                });
+			                const responseBody = await response.json();
+			                console.log(responseBody);
+			                         comment.value='';
+			                comment_list();
+			            } catch (error) {
+			                console.error('데이터 전송에 실패했습니다:', error);
+			            }
+			        };
+
+
+			        document.querySelector('.commentList').addEventListener('click',evt=>{
+			        if(evt.target.tagName !== 'BUTTON') return;
+			        switch(evt.target.classList[0]){
+			          //수정
+			          case "modifyBtn" : modify(evt); break;
+			          //삭제
+			          case "delBtn" : del(evt); break;
+			          //저장
+			          case "saveBtn" : save(evt); break;
+			          //취소
+			          case "cancelBtn" : cancel(evt); break;
+			        }
+			      });
+
+
+			            //  수정완료
+
+			             async function save(e){
+
+			                const $modifyModeLi = e.target.closest('li');
+			                const textData = $modifyModeLi.querySelector('textarea').value;
+			            try {
+			                const response = await fetch(`http://localhost:9080/comment/${$modifyModeLi.dataset.commentId}/modify`, {
+			                    method: 'PATCH',
+			                    headers: {
+			                        'Content-Type': 'application/json'
+			                    },
+			                    body:JSON.stringify({detail : textData})
+			                });
+			                         if (!response.ok) return new Error('서버응답오류');
+			                const responseBody = await response.json();
+			                console.log(responseBody);
+			                if(responseBody.header.rtcd === '00'){
+			                  comment_list();
+			                }
+			                else{
+			                  new Error('수정실패!!');
+			                }
+
+			             }  catch (error) {
+			                console.error('데이터 전송에 실패했습니다:', error);
+			            }
+
+			                     }
+
+			             //댓글 수정
+			    function modify(e){
+			        console.log('수정');
+			                 // 1) 수정중인 댓글 자동 취소
+			                          document.querySelector('.commentList li.modi')?.querySelector('.cancelBtn').click();
+			         //2)
+			               const $readModeLi = e.target.closest('li');
+			               const $modifyModeLi = modifyMode.content.cloneNode(true).querySelector('li');
+			               $modifyModeLi.dataset.commentId =  $readModeLi.dataset.commentId;
+
+			               $modifyModeLi.querySelector('textarea').value = $readModeLi.querySelector('.reply').textContent;
+			               //댓글 초기값을 사용자정의 속성을 생성해 저장해둔다.
+			               $modifyModeLi.querySelector('textarea').dataset.oldText = $readModeLi.querySelector('.reply').textContent;
+			               $modifyModeLi.querySelector('.emailData').dataset.userEmail = $readModeLi.querySelector('#userEmail').textContent
+
+			               $readModeLi.replaceWith($modifyModeLi);
+			      }
+
+
+			             //댓글 수정취소
+			             function cancel(e){
+			                            console.log('취소');
+			                             const $readModeLi = readMode.content.cloneNode(true).querySelector('li');
+			                             const $modifyModeLi = e.target.closest('li');
+			                             $readModeLi.dataset.commentId = $modifyModeLi.dataset.commentId;
+			                             //댓글 초기값을 사용자정의 속성을 읽어온다.
+			                             $readModeLi.querySelector('.reply').textContent =  $modifyModeLi.querySelector('textarea').dataset.oldText;
+			                             $readModeLi.querySelector('#userEmail').textContent = $modifyModeLi.querySelector('.emailData').dataset.userEmail;
+			                             $modifyModeLi.replaceWith($readModeLi);
+			             }
+
+
+			                             //댓글 삭제
+			      function del(e){
+			      console.log('삭제');
+			      $delModalByComment.dataset.replyNumber = e.target.closest('li').dataset.commentId;
+			      $delModalByComment.showModal();
+
+			      // e.target.closest('li').remove();
+			    }
+
+
+			      /* 모달창 ---------------------------------------------*/
+			  const $delModalByComment = document.getElementById('delModalByComment');    //삭제 모달창
+			  const $cancelBtnByComment = document.getElementById('cancelBtnByComment');   //취소버튼 모달창
+			  const $delItemBtnByComment = document.getElementById('delItemBtnByComment');
+
+			   // 댓글 삭제 모달창
+			   $delModalByComment.addEventListener('close',evt=>{
+			    if($delModalByComment.returnValue == 'ok'){
+			      deleteComment(evt);
+			    }
+			  });
+
+			  //취소버튼 모달창
+			  $cancelBtnByComment.addEventListener('click', evt=>{
+			    $delModalByComment.close('cancel');
+			  });
+
+			  //삭제버튼 모달창
+			  $delItemBtnByComment.addEventListener('click', evt=>{
+			    $delModalByComment.close('ok');
+			  });
+
+
+			  async function deleteComment(evt){
+			  const replyNumber = evt.currentTarget.dataset.replyNumber;
+			      try {
+			                const response = await fetch(`http://localhost:9080/comment/${replyNumber}/del`, {
+			                    method: 'DELETE',
+			                    headers: {
+			                    accept: 'application/json'
+			                     }
+			                });
+			                console.log(response);
+			                if (!response.ok) return new Error('서버응답오류');
+			                const responseBody = await response.json();
+
+			                console.log(responseBody);
+			                if(responseBody.header.rtcd === '00'){
+			                  comment_list();
+			                }
+			                else{
+			                  new Error('삭제실패!!');
+			                }
+
+			            } catch (error) {
+			                console.error('데이터 전송에 실패했습니다:', error);
+			            }
+			            finally{
+
+			            }
+			}
+
+			  //댓글 처리끝
+
+			  //수정
+			  const $modifyBtn = document.getElementById('modifyBtn');
+			  if($modifyBtn !== null){
+
+			               $modifyBtn.addEventListener('click',e=>{
+			                   var pid = [[${postData.postId}]];
+			                   location.href=`/post/${pid}/edit`; // GET http://서버주소 or 서버도메인/products/상품번호/edit
+			                 });
+			             }
+
+			  //삭제
+			  const $deleteBtn = document.getElementById('deleteBtn');
+			  // $deleteBtn.addEventListener('click', evt=>{
+			  //   if(!window.confirm('삭제하시겠습니까')) return;
+			  //   var pid = [[${postData.postId}]];
+			  //   location.href = `/post/${pid}/del`;
+			  // });
+
+			  /* 모달창 ---------------------------------------------*/
+			  const $delModal = document.getElementById('delModal');    //삭제 모달창
+			  const $cancelBtn = document.getElementById('cancelBtn');   //취소버튼 모달창
+			  const $delItemBtn = document.getElementById('delItemBtn'); //삭제버튼 모달창
+
+
+			           if($deleteBtn !== null){
+
+			                     $deleteBtn.addEventListener('click',e=>{
+			                   // if(!window.confirm('삭제하시겠습니까')) return;
+			                   $delModal.showModal();
+
+			                    });
+			             }
+
+			  $delModal.addEventListener('close',evt=>{
+			    if($delModal.returnValue == 'ok'){
+			      var pid = [[${postData.postId}]];
+			      location.href = `/post/${pid}/del`; // GET http://서버주소 or 서버도메인/products/상품번호/del
+			    }
+			  });
+
+			  //취소버튼 모달창
+			  $cancelBtn.addEventListener('click', evt=>{
+			    $delModal.close('cancel');
+			  });
+
+			  //삭제버튼 모달창
+			  $delItemBtn.addEventListener('click', evt=>{
+			    $delModal.close('ok');
+			  });
+
+
+
+
+
+
+
+			  // 목록
+			  const $listBtn = document.getElementById('listBtn');
+			  $listBtn.addEventListener('click',e=>{
+			    location.href = '/post';      // GET http://서버주소 or 서버도메인/products
+			  }, false);
+
+
+			  async function comment_list()
+			  {
+
+			    const reqPage = pagination.currentPage;   //요청 페이지
+			    const reqCnt = pagination.recordsPerPage;
+			    const url = `http://localhost:9080/comment/[[${postData.postId}]]/comment?reqPage=${reqPage}&reqCnt=${reqCnt}`;
+			    try {
+			        const res = await fetch(url, {
+			            method: 'GET',
+			            headers: {
+			                accept: 'application/json',
+			            },
+			        });
+			        const result = await res.json();
+			        if (result.header.rtcd == '00') {
+			                      const commentListElements = document.querySelectorAll('.commentList');
+			                      commentListElements.forEach(commentListElement => {
+			                      while (commentListElement.firstChild) {
+			                      commentListElement.removeChild(commentListElement.firstChild);
+			                      }
+			                      });
+
+			              result.body.comments.forEach((item) =>{
+			              const $readeModeLi = readMode.content.cloneNode(true).querySelector('li');
+			              $readeModeLi.dataset.commentId = item.commentsId;
+			              $readeModeLi.dataset.userEmail =  item.email;
+			              $readeModeLi.querySelector('.reply').textContent = item.detail;
+			              $readeModeLi.querySelector('#userEmail').textContent = item.email;
+
+			            if($readeModeLi.dataset.userEmail != [[${session.UserData.email}]]){
+			                         $readeModeLi.querySelectorAll('button').forEach(button => {
+			                                 button.style.display = 'none';
+			                             });
+			                     }
+
+			              document.querySelector('.commentList').appendChild($readeModeLi);
+			            });
+			            pagination.setTotalRecords(result.totalCnt);
+			            pagination.displayPagination(comment_list);
+			        } else {
+			            new Error('목록 실패!!');
+			        }
+			    } catch (err) {
+			        console.log(err.message);
+			    } finally {
+			    }
+
+			}
+		</script>
+	</body>
+</html>

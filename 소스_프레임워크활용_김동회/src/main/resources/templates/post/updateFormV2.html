@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>수정양식</title>
+   <style>
+     input[type="text"]:focus {
+       outline: none; /* 클릭시 테두리 제거 */
+   }
+
+    input[type="text"] {
+        width: 100%; /* 부모 요소인 td의 너비에 100%로 설정 */
+        box-sizing: border-box; /* 너비를 content-box 기준으로 설정 */
+        padding: 5px; /* 내부 여백 설정 (선택사항) */
+    }
+
+   table>tr>td:nth-child(1){
+     width: 75px;
+    }
+     td:nth-child(2) {
+      padding-left: 4px;
+   border: 1px solid black;
+    border-collapse: collapse;
+     }
+
+  table{
+   margin-bottom: 3px;
+  }
+
+             .bottom-border {
+        border-width: 0 0
+         }
+
+         input::placeholder {
+     font-size:0.8em;
+     font-style: italic;
+   }
+   .err-msg{
+ display: none;
+ color:red;
+     font-size:0.8em;
+     font-style: italic;
+}
+.errTitle.err-msg.on{
+    display: inline-block;
+     color:red;
+     font-size:0.8em;
+     font-style: italic;
+      position: absolute;
+         left: 530px;
+      top: 65px;
+}
+
+     .errDetail.err-msg.on{
+    display: inline-block;
+     color:red;
+     font-size:0.8em;
+     font-style: italic;
+      position: absolute;
+      left: 530px;
+      top: 300px;
+}
+
+     /* textarea 요소의 크기 조절 방지 */
+   textarea {
+       resize: none; /* 크기 조절 기능 비활성화 */
+   }
+   textarea:focus {
+      outline : none;
+   }
+   
+   .button_wrap{
+    margin-top: 5px;
+    margin-left: 60px;
+   }
+   </style>
+</head>
+<body>
+  
+  <script>
+    
+    const $script = document.createElement('script');
+  $script.src = '/post_js/detailForm.js';
+  $script.async = true;
+  
+  document.head.appendChild($script);
+
+  </script>
+
+</body>
+</html>

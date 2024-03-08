@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8" />
+		<title>로그인</title>
+		<style>
+			body {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100vh;
+				margin: 0;
+			}
+			form {
+				width: 350px; /* Adjust the width as needed */
+				height: 300px;
+				padding: 20px;
+				border: 1px solid #ccc;
+				border-radius: 5px;
+			}
+
+			#login_wrap > div {
+				margin-bottom: 20px;
+				/* input과 버튼 사이 간격을 조정합니다. */
+			}
+
+			#login_wrap > div:nth-child(1) {
+				display: flex;
+				justify-content: center; /* 내부 요소를 가로 방향으로 중앙에 배치합니다. */
+				align-items: center;
+			}
+
+			input[type="text"],
+			input[type="password"] {
+				width: 95%; /* 너비를 조정합니다. */
+				height: 40px; /* 높이를 조정합니다. */
+				padding: 10px; /* 내부 여백을 추가합니다. */
+				font-size: 16px; /* 글꼴 크기를 조정합니다. */
+				border: 1px solid lightgray; /* 테두리 색상을 연하게 설정합니다. */
+			}
+
+			#loginBtn {
+				width: 100%;
+				background-color: #4caf50; /* Set your desired background color */
+				color: white; /* Set the text color */
+				padding: 15px 25px; /* Adjust padding to increase button size */
+				border: none; /* Remove the border */
+				border-radius: 8px; /* Optional: Add rounded corners */
+				cursor: pointer;
+				font-size: 16px; /* Adjust font size */
+			}
+			.err_wrap {
+				margin-right: 20px;
+				margin-top: 30px;
+			}
+
+			.err-msg {
+				color: red;
+			}
+		</style>
+	</head>
+	<body>
+		<form action="" method="post">
+			<div id="login_wrap">
+				<div><h3>로그인</h3></div>
+				<div>
+					<input type="text" placeholder="이메일" name="email" />
+				</div>
+				<div>
+					<input
+						type="password"
+						placeholder="비밀번호"
+						name="passwd"
+					/>
+				</div>
+				<div><button id="loginBtn">로그인</button></div>
+				<div class="err_wrap">
+					<span
+						id="EmailCHK"
+						class="err-msg"
+						th:if="${s_err_email != ''}"
+						th:class="'err-msg on'"
+						th:text="${s_err_email}"
+					></span>
+
+					<span
+						id="passwdCHK"
+						class="err-msg"
+						th:if="${s_err_passwd != ''}"
+						th:class="'err-msg on'"
+						th:text="${s_err_passwd}"
+					></span>
+				</div>
+			</div>
+		</form>
+	</body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8" />
+		<title>회원가입</title>
+		<style>
+			body {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100vh;
+				margin: 0;
+			}
+			form {
+				width: 300px; /* Adjust the width as needed */
+				padding: 20px;
+				border: 1px solid #ccc;
+				border-radius: 5px;
+			}
+
+			#joinBtn {
+				background-color: #4caf50; /* Set your desired background color */
+				color: white; /* Set the text color */
+				padding: 15px 25px; /* Adjust padding to increase button size */
+				border: none; /* Remove the border */
+				border-radius: 8px; /* Optional: Add rounded corners */
+				cursor: pointer;
+				font-size: 16px; /* Adjust font size */
+				margin-top: 30px;
+			}
+
+			input {
+				padding: 10px; /* Adjust padding to increase input size */
+				border: none; /* Remove the border */
+				border-radius: 5px; /* Optional: Add rounded corners */
+				background-color: #ebe5e5; /* Set your desired background color */
+				color: #0f0f0f; /* Set the text color */
+				font-size: 16px; /* Adjust font size */
+				outline: none; /* Remove the default outline */
+			}
+
+			.err-msg {
+				display: none;
+				color: red;
+				font-size: 0.8em;
+				font-style: italic;
+			}
+			.err-msg.on {
+				display: inline-block;
+			}
+		</style>
+	</head>
+	<body>
+		<form action="/member/join" method="POST">
+			<div>
+				<div class="header"><h3>회원가입</h3></div>
+
+				<div><label for="email">이메일</label></div>
+				<div class="input_wrap">
+					<input type="text" name="email" id="email" />
+					<button type="button" id="dupchkBtn">중복체크</button>
+					<span
+						id="EmailCHK"
+						class="err-msg"
+						th:if="${s_err_email != ''}"
+						th:class="'err-msg on'"
+						th:text="${s_err_email}"
+					></span>
+				</div>
+
+				<div><label for="passwd">비밀번호</label></div>
+				<div class="input_wrap">
+					<input type="password" name="passwd" id="passwd" />
+					<span
+						id="passwdCHK"
+						class="err-msg"
+						th:if="${s_err_passwd != ''}"
+						th:class="'err-msg on'"
+						th:text="${s_err_passwd}"
+					></span>
+				</div>
+
+				<div><label for="passwd_chk">비밀번호확인</label></div>
+				<div class="input_wrap">
+					<input type="password" id="passwd_chk" />
+					<span class="err-msg" id="SamePasswordCHK"></span>
+				</div>
+
+				<div><label for="nickname">닉네임</label></div>
+				<div class="input_wrap">
+					<input type="text" name="nickname" id="nickname" />
+					<span
+						id="nicknameCHK"
+						class="err-msg"
+						th:if="${s_err_nickname != ''}"
+						th:class="'err-msg on'"
+						th:text="${s_err_nickname}"
+					></span>
+				</div>
+
+				<div><button id="joinBtn">가입</button></div>
+			</div>
+		</form>
+
+		<script>
+			// 이메일 중복체크 완료후 가입완료되게 구현
+			joinBtn.addEventListener("submit", (evt) => {
+				evt.preventDefault(); //submit 차단
+				//이메일 중복체크 확인
+				if (!email.dataset.dupchk || email.dataset.dupchk == "EXIST") {
+					errmsg_email.textContent = "이메일 중복체크 바랍니다!";
+					return;
+				}
+				evt.currentTarget.submit();
+			});
+
+			// 비밀번호 와 비밀번호 확인에 입력된값이 같은지 체크
+			const $pwdchk = document.getElementById("passwd_chk");
+			$pwdchk.addEventListener("blur", (evt) => {
+				console.log(document.getElementById("passwd").value);
+				console.log($pwdchk.value);
+				if (document.getElementById("passwd").value !== $pwdchk.value) {
+					SamePasswordCHK.classList.add("on");
+					SamePasswordCHK.textContent =
+						"앞에 입력한 비밀번호와 다른 값입니다. 다시한번 입력해주세요.";
+					evt.target.focus();
+					evt.target.select();
+				} else {
+					SamePasswordCHK.classList.remove("on");
+					SamePasswordCHK.textContent = "";
+				}
+			});
+
+			// 유효성 체크 - 이메일
+			const $EmailCHK = document.getElementById("EmailCHK");
+
+			email.addEventListener("blur", (evt) => {
+				const pattern =
+					/^[a-zA-Z0-9._%+-]{1,20}@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+				console.log(evt.target.value);
+				if (pattern.test(evt.target.value)) {
+					$EmailCHK.classList.remove("on");
+					$EmailCHK.textContent = "";
+				} else {
+					$EmailCHK.classList.add("on");
+					$EmailCHK.textContent =
+						"이메일 양식을 지켜주세요 ex) abc@kh.com";
+					evt.target.focus();
+					evt.target.select();
+				}
+			});
+
+			// 유효성 체크 - 비밀번호
+			const $passwdCHK = document.getElementById("passwdCHK");
+
+			passwd.addEventListener("blur", (evt) => {
+				const pattern = /^[A-Za-z0-9@]{6,12}$/;
+				if (pattern.test(evt.target.value)) {
+					$passwdCHK.classList.remove("on");
+					$passwdCHK.textContent = "";
+				} else {
+					$passwdCHK.classList.add("on");
+					$passwdCHK.textContent = "영문/숫자 @ 가능 6~12자리";
+					evt.target.focus();
+					evt.target.select();
+				}
+			});
+
+			//유효성 체크 - 닉네임
+			const $nicknameCHK = document.getElementById("nicknameCHK");
+
+			nickname.addEventListener("blur", (evt) => {
+				const pattern =
+					/^[a-zA-Z0-9가-힣!@#$%^&*()-_=+\\|\[\]{};:'",.<>/?]{2,10}$/;
+				if (pattern.test(evt.target.value)) {
+					$nicknameCHK.classList.remove("on");
+					$nicknameCHK.textContent = "";
+				} else {
+					$nicknameCHK.classList.add("on");
+					$nicknameCHK.textContent =
+						"영문/숫자/한글/특수문자가능, 2~10자리";
+					evt.target.focus();
+					evt.target.select();
+				}
+			});
+
+			// 이메일 중복체크
+
+			dupchkBtn.addEventListener("click", (evt) => {
+				if (email.value.trim().length == 0) {
+					$EmailCHK.classList.add("on");
+					$EmailCHK.textContent = "이메일 입력바랍니다.";
+					email.focus();
+					return;
+				}
+				$EmailCHK.classList.remove("on");
+				dupcheck();
+			});
+
+			async function dupcheck() {
+				const $email = document.getElementById("email");
+				const email = {};
+				email["email"] = $email.value;
+
+				const url = `/api/members/dupchk`;
+				const options = {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						accept: "application/json",
+					},
+					body: JSON.stringify(email),
+				};
+				const response = await fetch(url, options);
+				const msgBody = await response.json();
+				console.log(msgBody);
+				if (msgBody.header.rtcd === "21") {
+					console.log("email exits");
+					$EmailCHK.classList.add("on");
+					$EmailCHK.textContent = "존재하는 Email입니다";
+					$email.dataset.dupchk = "EXIST";
+					$email.focus();
+				} else if (msgBody.header.rtcd === "22") {
+					$email.dataset.dupchk = "NONE";
+					$email.readOnly = true;
+					dupchkBtn.disabled = true;
+					$EmailCHK.classList.add("on");
+					$EmailCHK.textContent = "사용가능한 Email입니다";
+					console.log("email none");
+				} else if (msgBody.header.rtcd === "23") {
+					$email.dispatchEvent(blur);
+				}
+			}
+		</script>
+	</body>
+</html>

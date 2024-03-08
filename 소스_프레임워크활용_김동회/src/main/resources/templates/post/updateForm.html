@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>수정양식</title>
+		<style>
+			input[type="text"]:focus {
+				outline: none; /* 클릭시 테두리 제거 */
+			}
+
+			input[type="text"] {
+				width: 100%; /* 부모 요소인 td의 너비에 100%로 설정 */
+				box-sizing: border-box; /* 너비를 content-box 기준으로 설정 */
+				padding: 5px; /* 내부 여백 설정 (선택사항) */
+			}
+
+			table > tr > td:nth-child(1) {
+				width: 75px;
+			}
+			td:nth-child(2) {
+				padding-left: 4px;
+				border: 1px solid black;
+				border-collapse: collapse;
+			}
+
+			table {
+				margin-bottom: 3px;
+			}
+
+			.bottom-border {
+				border-width: 0 0;
+			}
+
+			input::placeholder {
+				font-size: 0.8em;
+				font-style: italic;
+			}
+			.err-msg {
+				display: none;
+				color: red;
+				font-size: 0.8em;
+				font-style: italic;
+			}
+			.errTitle.err-msg.on {
+				display: inline-block;
+				color: red;
+				font-size: 0.8em;
+				font-style: italic;
+				position: absolute;
+				left: 530px;
+				top: 65px;
+			}
+
+			.errDetail.err-msg.on {
+				display: inline-block;
+				color: red;
+				font-size: 0.8em;
+				font-style: italic;
+				position: absolute;
+				left: 530px;
+				top: 300px;
+			}
+
+			/* textarea 요소의 크기 조절 방지 */
+			textarea {
+				resize: none; /* 크기 조절 기능 비활성화 */
+			}
+			textarea:focus {
+				outline: none;
+			}
+
+			.button_wrap {
+				margin-top: 5px;
+				margin-left: 60px;
+			}
+		</style>
+	</head>
+	<body>
+		<h3>게시글수정</h3>
+		<form action="" method="post">
+			<table>
+				<tr>
+					<td><label for="title">제목</label></td>
+					<td>
+						<input
+							class="bottom-border"
+							type="text"
+							id="title"
+							name="title"
+							th:value="${postData.title}"
+							placeholder="최소1글자/최대15글자"
+							pattern="[a-zA-Z0-9ㄱ-ㅎ가-힣_\-\s]{1,15}"
+							required
+						/>
+					</td>
+					<span class="errTitle err-msg" id="errTitle"></span>
+					<span
+						class="err-msg"
+						th:if="${s_err_title != null and s_err_title != ''}"
+						th:class="'ErrTitle err-msg on'"
+						th:text="${s_err_title}"
+					></span>
+				</tr>
+				<tr>
+					<td><label for="pname">작성자</label></td>
+					<td>
+						<input
+							class="bottom-border"
+							type="text"
+							id="pname"
+							name="pname"
+							th:value="${postData.email}"
+							readonly
+						/>
+					</td>
+				</tr>
+				<tr>
+					<td><label for="detail">내용</label></td>
+					<td>
+						<textarea
+							class="bottom-border"
+							rows="30"
+							cols="60"
+							id="detail"
+							name="detail"
+							th:text="${postData.detail}"
+							pattern="[a-zA-Z0-9ㄱ-ㅎ가-힣_\-]{1}"
+							required
+						></textarea>
+					</td>
+					<span class="errDetail err-msg" id="errDetail"></span>
+					<span
+						class="err-msg"
+						th:if="${s_err_detail != null and s_err_detail != ''}"
+						th:class="'errDetail err-msg on'"
+						th:text="${s_err_detail}"
+					></span>
+				</tr>
+			</table>
+			<div class="button_wrap">
+				<input id="modifyBtn" type="submit" value="저장" />
+				<input id="cancel" type="reset" value="취소" />
+				<input id="listBtn" type="button" value="목록" />
+			</div>
+		</form>
+
+		<script>
+			const $listBtn = document.getElementById("listBtn");
+			$listBtn.addEventListener(
+				"click",
+				(evt) => {
+					location.href = "/post";
+				},
+				false
+			);
+
+			title.addEventListener("blur", (evt) => {
+				console.log(evt.target.value);
+				const pattern = /[a-zA-Z0-9ㄱ-ㅎ가-힣_\-\s]{1,15}/;
+				if (pattern.test(evt.target.value)) {
+					errTitle.classList.remove("on");
+					errTitle.textContent = "";
+					console.log("패턴일치");
+				} else {
+					errTitle.classList.add("on");
+					errTitle.textContent = "최소1자리/최대15자리";
+					evt.target.focus();
+					evt.target.select();
+				}
+			});
+
+			detail.addEventListener("blur", (evt) => {
+				console.log(evt.target.value);
+				const pattern = /[a-zA-Z0-9ㄱ-ㅎ가-힣_\-\s]/;
+				if (pattern.test(evt.target.value)) {
+					errDetail.classList.remove("on");
+					errDetail.textContent = "";
+					console.log("패턴일치");
+				} else {
+					errDetail.classList.add("on");
+					errDetail.textContent = "최소1자리";
+					evt.target.focus();
+					evt.target.select();
+				}
+			});
+		</script>
+	</body>
+</html>
